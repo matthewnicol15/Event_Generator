@@ -16,9 +16,9 @@
 
 void Cascade_Star_Sigma_Star_Lambda_Width_Input(){
 
-   Int_t nevents=1000000000; // how many events to simulate
+   Int_t nevents=10000000; // how many events to simulate
    ostringstream Quantity;
-   Quantity << "1B"; // Define quantity for output file name
+   Quantity << "10M"; // Define quantity for output file name
 
    ostringstream File_Path;
    ostringstream Channel;
@@ -85,7 +85,7 @@ void Cascade_Star_Sigma_Star_Lambda_Width_Input(){
 
 
    // Histogram of the invariant mass of Sigma^{*-}
-   TH2F* hInv_Sigma_Star=new TH2F("hInv_Sigma_Star","Invariant mass of p and 2#pi^{-};M(p 2#pi^{-}) [GeV];Width",300,1.2,1.5,200,0.0,0.2);
+   TH2F* hInv_Sigma_Star=new TH2F("hInv_Sigma_Star","Invariant mass of p and 2#pi^{-};M(p 2#pi^{-}) [GeV];Width",2300,1.2,3.5,600,0.0,0.6);
    hInv_Sigma_Star->GetXaxis()->SetNdivisions(505);
    hInv_Sigma_Star->GetXaxis()->SetLabelSize(0.05);
    hInv_Sigma_Star->GetXaxis()->SetTitleSize(0.05);
@@ -288,8 +288,6 @@ void Cascade_Star_Sigma_Star_Lambda_Width_Input(){
    /////////////////////////////////////////////////////////////////////////////////
    /////  Determining scaling factors and widths  //////////////////////////////////
    /////////////////////////////////////////////////////////////////////////////////
-
-
 
    // Taking projections of the invariant mass plots at the mass of the baryon
    TH1F *project = (TH1F*)hInv_Sigma_Star_Sigma->ProjectionY("project",hInv_Sigma_Star_Sigma->GetXaxis()->FindBin(1.3828),hInv_Sigma_Star_Sigma->GetXaxis()->FindBin(1.3828));
