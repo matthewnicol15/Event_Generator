@@ -13,8 +13,8 @@ void Cascade_Sigma_Width_Input(){
    ostringstream Date;
    ostringstream Output_File_Name;
    File_Path << "/shared/storage/physhad/JLab/mn688/Dibaryon_Paper/Output/";
-   Channel << "dsss_Width_Cascade_M_Sigma_M_Output";
-   Date << "22022022_01";
+   Channel << "dsss_Width_Cascade_Sigma_Output";
+   Date << "24022022_01";
    Output_File_Name << File_Path.str().c_str()<<Channel.str().c_str()<<"_"<<Quantity.str().c_str()<<"_"<<Date.str().c_str()<<".root";
    cout<<Output_File_Name.str().c_str()<<endl;
 
@@ -133,24 +133,19 @@ void Cascade_Sigma_Width_Input(){
    // Initial particle
    TLorentzVector dsss;
    // Particles from 1st decay vertex
-   TLorentzVector *Sigma_M, *Cascade_M;
+   TLorentzVector *Sigma, *Cascade;
    //Binding Energies
    Double_t Binding_dsss_Mol, Binding_dsss_Hex;
 
 
    // Masses of particles
-   Double_t Masses_1[2] = {1.3217, 1.1974}; // Masses of particles from 1st decay vertex
+   Double_t Masses_1[2] = {1.3149, 1.1894}; // Masses of particles from 1st decay vertex
    Double_t m_dsss; // Mass of dsss, to be randomly generated in event loop
    TRandom *random = new TRandom3(); // Random number generator to produce mass of dsss
 
    Double_t Threshold; // Sum of decay particles
    // Adds up the decay particle rest masses to get threshold
-   for(Int_t j=0; j<2; j++){
-      Threshold += Masses_1[j];
-   }
-   cout<<Threshold<<endl;
-   // Was giving a really high number for some reason so added in line below
-   Threshold = 1.3217 + 1.1974;
+   Threshold = 1.3149 + 1.1894;
    cout<<Threshold<<endl;
 
    /////////////////////////////////////////////////////////////////////////////////
@@ -158,13 +153,13 @@ void Cascade_Sigma_Width_Input(){
    /////////////////////////////////////////////////////////////////////////////////
 
    Double_t Phasespace_1; // Phase weight for decay vertices
-   Double_t E_Cascade_M, E_Sigma_M; // Energy in rest frame of parent particle
-   Double_t q_Cascade_M, q_Sigma_M; // Momentum of particles
-   Double_t m_Cascade_M = 1.3217, m_Sigma_M = 1.1974, m_Cascade_Star_M = 1.5350,m_Sigma_Star_M = 1.3872, m_Omega_M = 1.6725, m_Delta_M = 1.2320; // Nominal masses of parent particles
+   Double_t E_Cascade, E_Sigma; // Energy in rest frame of parent particle
+   Double_t q_Cascade, q_Sigma; // Momentum of particles
+   Double_t m_Cascade = 1.3149, m_Sigma = 1.1894, m_Cascade_Star_M = 1.5350,m_Sigma_Star_M = 1.3872, m_Omega_M = 1.6725, m_Delta_M = 1.2320; // Nominal masses of parent particles
    Double_t R = 6.3; // s-channel resonance in the pn and SigmaCascade systems
    // Double_t gamma_0 =  // Sum of decay widths of daughter particles
-   Double_t gamma_R_Mol = 2.75012; // This contains the coupling constants and other constants, fitted to yield a total width equal to binding energy
-   Double_t gamma_R_Hex = 2.25653; // This contains the coupling constants and other constants, fitted to yield a total width equal to binding energy
+   Double_t gamma_R_Mol = 2.68015; // This contains the coupling constants and other constants, fitted to yield a total width equal to binding energy
+   Double_t gamma_R_Hex = 2.1964; // This contains the coupling constants and other constants, fitted to yield a total width equal to binding energy
    Double_t Lambda = 0.16; // Cutoff parameter, this is adjusted to best reproduce the ABC effect (decup-decup only)
    Double_t FF; // Monopole formfactor, this accounts for potential barriers
    Double_t Width_Weight_noq_Mol, Width_Weight_noq_Hex; // Overall weight to apply for the width
@@ -204,22 +199,22 @@ void Cascade_Sigma_Width_Input(){
 
       // Getting the momentum and energy of the particles for width equations
       // Cascade^{-}
-      E_Cascade_M = (pow(m_dsss,2) + pow(Masses_1[0],2) - pow(Masses_1[1],2))/(2*m_dsss);
-      q_Cascade_M = sqrt(abs(pow(E_Cascade_M,2) - pow(Masses_1[0],2)));
+      E_Cascade = (pow(m_dsss,2) + pow(Masses_1[0],2) - pow(Masses_1[1],2))/(2*m_dsss);
+      q_Cascade = sqrt(abs(pow(E_Cascade,2) - pow(Masses_1[0],2)));
 
       // Sigma^{-}
-      E_Sigma_M = (pow(m_dsss,2) + pow(Masses_1[1],2) - pow(Masses_1[0],2))/(2*m_dsss);
-      q_Sigma_M = sqrt(abs(pow(E_Sigma_M,2) - pow(Masses_1[1],2)));
+      E_Sigma = (pow(m_dsss,2) + pow(Masses_1[1],2) - pow(Masses_1[0],2))/(2*m_dsss);
+      q_Sigma = sqrt(abs(pow(E_Sigma,2) - pow(Masses_1[1],2)));
 
       // Defining monopole formfactor
       // (octet-octet) use R in equation 3 in paper
       // (decup-decup) use Lambda using equation 5 in paper
-      FF = (pow(R,4))/(1+((pow(R,4))*(pow(q_Cascade_M,4))));
+      FF = (pow(R,4))/(1+((pow(R,4))*(pow(q_Cascade,4))));
 
 
       // Defining total weight equation for width
-      Width_Weight_noq_Mol = gamma_R_Mol * FF * pow(q_Cascade_M,5);
-      Width_Weight_noq_Hex = gamma_R_Hex * FF * pow(q_Cascade_M,5);
+      Width_Weight_noq_Mol = gamma_R_Mol * FF * pow(q_Cascade,5);
+      Width_Weight_noq_Hex = gamma_R_Hex * FF * pow(q_Cascade,5);
 
       // Determine the Wavefunction probability based on the dibaryon binding energy
       Double_t Wavefunction_prob = prob_BE->Eval(-fabs(Binding_dsss_Mol));
@@ -240,13 +235,11 @@ void Cascade_Sigma_Width_Input(){
    hInv_dsss_M_Phs_WW_FF_noq_Hex->Scale(scale);
    hBinding_dsss_M_Phs_WW_FF_noq_Hex->Scale(scale);
 
-   Double_t Width = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Mol->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Mol->FindBin(-0.084));
-   cout<<"Width = "<<Width<<" MeV"<<endl;
 
    Double_t Width_Mol_84 = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Mol->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Mol->FindBin(-0.084));
    Double_t Width_Hex_84 = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Hex->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Hex->FindBin(-0.084));
-   Double_t Width_Mol_Expected = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Mol->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Mol->FindBin(-0.236));
-   Double_t Width_Hex_Expected = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Hex->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Hex->FindBin(-0.002));
+   Double_t Width_Mol_Expected = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Mol->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Mol->FindBin(-0.002));
+   Double_t Width_Hex_Expected = 1000*hBinding_dsss_M_Phs_WW_FF_noq_Hex->GetBinContent(hBinding_dsss_M_Phs_WW_FF_noq_Hex->FindBin(-0.234));
 
    cout<<"Molecule Width at 84 MeV = "<<Width_Mol_84<<" MeV, Width at expected BE ="<<Width_Mol_Expected<<" MeV"<<endl;
    cout<<"Hexaquark Width at 84 MeV = "<<Width_Hex_84<<" MeV, Width at expected BE ="<<Width_Hex_Expected<<" MeV"<<endl;
